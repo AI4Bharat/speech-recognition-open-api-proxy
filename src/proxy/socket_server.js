@@ -87,10 +87,11 @@ const listenToSocketConnections = (io) => {
             return;
         }
         
-        var currentUser = socket.id;
-        var currentPostProcessors = socket.handshake.query.postProcessors;
+        const currentUser = socket.id;
+        const currentSamplingRate = socket.handshake.query.samplingRate;
+        const currentPostProcessors = socket.handshake.query.postProcessors;
 
-        let grpcClient = new GrpcClient(currentUser, currentLanguage, currentPostProcessors);
+        let grpcClient = new GrpcClient(currentUser, currentLanguage, currentSamplingRate, currentPostProcessors);
         grpcClient.connect();
 
         socket.on("disconnect", (reason) => {
