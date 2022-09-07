@@ -19,8 +19,10 @@ let packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 let proto = grpc.loadPackageDefinition(packageDefinition).ekstep.speech_recognition;
 
 class GrpcClient {
-    constructor(language) {
+    constructor(user, language, postProcessors=[]) {
+        this.user = user;
         this.language = language;
+        this.postProcessors = postProcessors;
         this.client = null;
         this.stream = null;
     }
@@ -57,7 +59,9 @@ class GrpcClient {
     startStream(responseListener = () => { }, errorListener = () => { }) {
         if (this.client !== null && this.client !== undefined) {
             let metadata = new grpc.Metadata();
+            metadata.add('user', this.user);
             metadata.add('language', this.language);
+            metadata.add('postProcessors', this.postProcessors);
             this.stream = this.client.recognize_audio(metadata, function (err, result) {
                 console.log("Stream connection result => ", result);
             })
